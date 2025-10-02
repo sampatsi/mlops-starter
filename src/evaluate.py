@@ -1,5 +1,6 @@
 
 import mlflow
+import os
 from sklearn.metrics import classification_report
 from data import load_data
 import mlflow.sklearn
@@ -35,6 +36,9 @@ def main():
 
     report = classification_report(y_test, preds, target_names=target_names)
     print(report)
+
+    # Create artifacts directory if it doesn't exist
+    os.makedirs("artifacts", exist_ok=True)
     with open("artifacts/classification_report.txt", "w") as f:
         f.write(report)
 
