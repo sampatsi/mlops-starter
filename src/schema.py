@@ -1,6 +1,7 @@
 
 from pydantic import BaseModel, Field
 
+
 class IrisInput(BaseModel):
     sepal_length: float = Field(..., ge=0, description="Sepal length (cm)")
     sepal_width: float = Field(..., ge=0, description="Sepal width (cm)")

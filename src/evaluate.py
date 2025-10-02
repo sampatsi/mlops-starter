@@ -4,6 +4,7 @@ from sklearn.metrics import classification_report
 from data import load_data
 import mlflow.sklearn
 
+
 def main():
     mlflow.set_tracking_uri("mlruns")
     client = mlflow.tracking.MlflowClient()
@@ -11,8 +12,14 @@ def main():
     # Get latest run for our experiment
     exp = client.get_experiment_by_name("iris-exp")
     if exp is None:
-        raise RuntimeError("Experiment iris-exp not found. Run train.py first.")
-    runs = client.search_runs([exp.experiment_id], order_by=["attributes.start_time DESC"], max_results=1)
+        raise RuntimeError(
+            "Experiment iris-exp not found. Run train.py first."
+        )
+    runs = client.search_runs(
+        [exp.experiment_id],
+        order_by=["attributes.start_time DESC"],
+        max_results=1
+    )
     if not runs:
         raise RuntimeError("No runs found. Run train.py first.")
 
@@ -30,6 +37,7 @@ def main():
     print(report)
     with open("artifacts/classification_report.txt", "w") as f:
         f.write(report)
+
 
 if __name__ == "__main__":
     main()

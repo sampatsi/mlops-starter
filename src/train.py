@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score
 from data import load_data
 
+
 def main(args):
     mlflow.set_tracking_uri("mlruns")
     mlflow.set_experiment("iris-exp")
@@ -30,6 +31,7 @@ def main(args):
         mlflow.sklearn.log_model(clf, artifact_path="model")
 
         print(f"Run ID: {run.info.run_id}  F1: {f1:.4f}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
