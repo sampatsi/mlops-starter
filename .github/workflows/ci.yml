@@ -28,6 +28,8 @@ jobs:
         run: pytest -q
 
       - name: Train + Evaluate
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI || 'http://localhost:5001' }}
         run: |
           python src/train.py --n_estimators 120 --max_depth 3
           python src/evaluate.py
@@ -35,5 +37,36 @@ jobs:
       # Optional: Register model on main only
       - name: Register model
         if: github.ref == 'refs/heads/main'
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI || 'http://localhost:5001' }}
         run: |
           python src/register.py --model-name iris_classifier
+          
+      # Enhanced: Train multiple models and register best one
+      - name: Train and register best model
+        if: github.ref == 'refs/heads/main'
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI || 'http://localhost:5001' }}
+          MLFLOW_BACKEND_URI: ${{ secrets.MLFLOW_BACKEND_URI || 'sqlite:///mlflow.db' }}
+          MLFLOW_EXPERIMENT: ${{ secrets.MLFLOW_EXPERIMENT || 'iris-classification-ci' }}
+          MLFLOW_MODEL_NAME: ${{ secrets.MLFLOW_MODEL_NAME || 'iris-classifier' }}
+        run: |
+          python scripts/ci_train_model.py
+          
+      # Upload model artifacts
+      - name: Upload model artifacts
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v3
+        with:
+          name: mlflow-artifacts
+          path: artifacts/
+          retention-days: 30
+          
+      # Upload model metadata
+      - name: Upload model metadata
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-metadata
+          path: model_metadata.json
+          retention-days: 30

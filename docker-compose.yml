@@ -14,7 +14,7 @@ services:
     working_dir: /mlflow_data
     command: >
       bash -c "
-        pip install mlflow==2.14.3 &&
+        pip install --no-progress-bar --disable-pip-version-check mlflow==2.14.3 &&
         mlflow server
         --backend-store-uri sqlite:///mlflow_data/mlflow.db
         --artifacts-destination /artifacts
