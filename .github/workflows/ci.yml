@@ -1,0 +1,39 @@
+
+name: ci-mlops-starter
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test-train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint
+        run: flake8 src tests
+
+      - name: Run unit tests
+        run: pytest -q
+
+      - name: Train + Evaluate
+        run: |
+          python src/train.py --n_estimators 120 --max_depth 3
+          python src/evaluate.py
+
+      # Optional: Register model on main only
+      - name: Register model
+        if: github.ref == 'refs/heads/main'
+        run: |
+          python src/register.py --model-name iris_classifier
