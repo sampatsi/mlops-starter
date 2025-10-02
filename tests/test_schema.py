@@ -4,9 +4,10 @@ import sys
 import os
 from pydantic import ValidationError
 
-# Add src directory to Python path
+# Add src directory to Python path before importing local modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
-from schema import IrisInput
+
+from schema import IrisInput  # noqa: E402
 
 
 def test_valid_input():
