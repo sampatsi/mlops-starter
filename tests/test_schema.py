@@ -1,7 +1,12 @@
 
 import pytest
+import sys
+import os
 from pydantic import ValidationError
-from src.schema import IrisInput
+
+# Add src directory to Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+from schema import IrisInput
 
 
 def test_valid_input():
