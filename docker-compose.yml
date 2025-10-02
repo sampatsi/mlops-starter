@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mlflow-server:
+    image: python:3.11-slim
+    container_name: mlops-mlflow-server
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./mlflow_data:/mlflow_data
+      - ./artifacts:/artifacts
+    environment:
+      - MLFLOW_TRACKING_URI=sqlite:///mlflow_data/mlflow.db
+    working_dir: /mlflow_data
+    command: >
+      bash -c "
+        pip install mlflow==2.14.3 &&
+        mlflow server
+        --backend-store-uri sqlite:///mlflow_data/mlflow.db
+        --artifacts-destination /artifacts
+        --host 0.0.0.0
+        --port 5001
+      "
+    restart: unless-stopped
+    networks:
+      - mlops-network
+
+networks:
+  mlops-network:
+    driver: bridge
